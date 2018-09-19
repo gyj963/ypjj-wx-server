@@ -1,14 +1,29 @@
 const http = require('http');
 
-const hostname = '127.0.0.1';
-const port = 3000;
+const hostname = 'localhost';
+const port = 80;
 
 const server = http.createServer((req, res) => {
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'text/plain');
-    res.end('Hello world\n');
+	let body = [];
+	req.on('error',(err) => {
+		console.error(err);
+	}).on('data', chunk => {
+		console.log('chunk:',chunk)
+		body.push(chunk);
+
+
+	}).on('end', () => {
+		if(req.url === '/wx'){	
+			body = Buffer.concat(body).toString();
+			console.log("req body:",body);
+			res.statusCode = 200
+    			res.setHeader('Content-Type', 'text/plain');
+    			res.end('Hello world\n');
+		}
+	})
+		
 })
 
-server.listen(port, hostname, () => {
-    console.log(`Server runnint at http://${hostname}:${port}`);
+server.listen(port, () => {
+    console.log(`Server runnint at ${port}`);
 })
