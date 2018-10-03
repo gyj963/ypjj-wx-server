@@ -52,9 +52,8 @@ router.post('/wx', (ctx, next) => {
 			<MsgType><![CDATA[text]]></MsgType>
 			<Content><![CDATA[你好]]></Content>
 			</xml>`;
-			ctx.status = 200;
-			ctx.set('Content-Type', 'application/xml')
-			ctx.body = resObj;
+			ctx.res.writeHead(200, {'Content-Type': 'application/xml'});
+			ctx.res.end(resObj);
 			console.log("router parseString ctx:",ctx);
 			next();
 		}).catch((err)=>{
