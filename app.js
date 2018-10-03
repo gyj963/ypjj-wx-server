@@ -38,16 +38,6 @@ router.post('/wx', async (ctx, next) => {
 		ctx.body = 'failed';
 		return false;
 	}
-	// let resObj = `<xml><ToUserName><![CDATA[??????]]></ToUserName>
-	// 		<FromUserName><![CDATA[!!!!!!!!!!!]]></FromUserName>
-	// 		<CreateTime>12345678</CreateTime>
-	// 		<MsgType><![CDATA[text]]></MsgType>
-	// 		<Content><![CDATA[你好]]></Content>
-	// 		</xml>`;
-	// 	ctx.status = 200;
-	// 	ctx.type = 'application/xml';
-	// 	ctx.body = resObj;
-	// 	console.log("???????ctx:",ctx);
 	function getXmlObj(ctx){
 		return new Promise((resolve, reject) => {
 			let body = [];
@@ -65,8 +55,8 @@ router.post('/wx', async (ctx, next) => {
 			})
 		})
 	}
+	ctx.status = 200;
 	let xmlObj = await getXmlObj(ctx);
-	
 	if(xmlObj) {
 		let resObj = `<xml><ToUserName><![CDATA[${xmlObj.FromUserName}]]></ToUserName>
 			<FromUserName><![CDATA[${xmlObj.ToUserName}]]></FromUserName>
@@ -74,7 +64,6 @@ router.post('/wx', async (ctx, next) => {
 			<MsgType><![CDATA[text]]></MsgType>
 			<Content><![CDATA[你好]]></Content>
 			</xml>`;
-		ctx.status = 200;
 		ctx.type = 'application/xml';
 		ctx.body = resObj;
 		console.log("???????ctx:",ctx);
