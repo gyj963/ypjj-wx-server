@@ -38,37 +38,8 @@ router.post('/wx', async (ctx, next) => {
 		ctx.body = 'failed';
 		return false;
 	}
-	let resObj = `<xml><ToUserName><![CDATA[??????]]></ToUserName>
-			<FromUserName><![CDATA[!!!!!!!!!!!]]></FromUserName>
-			<CreateTime>12345678</CreateTime>
-			<MsgType><![CDATA[text]]></MsgType>
-			<Content><![CDATA[你好]]></Content>
-			</xml>`;
-		ctx.status = 200;
-		ctx.type = 'application/xml';
-		ctx.body = resObj;
-		console.log("???????ctx:",ctx);
-	// function getXmlObj(ctx){
-	// 	return new Promise((resolve, reject) => {
-	// 		let body = [];
-	// 		ctx.req.on('data', chunk => {
-	// 			body.push(chunk);
-	// 		}).on('end', () => {
-	// 			let xml = Buffer.concat(body).toString();
-	// 			let parseString = promisify(xml2js.parseString, xml2js);
-	// 			parseString(xml).then((result) => {
-	// 				let receiveData = result.xml;
-	// 				resolve(receiveData);
-	// 			}).catch((err)=>{
-	// 				reject(err);
-	// 			})
-	// 		})
-	// 	})
-	// }
-	// let xmlObj = await getXmlObj(ctx);
-	// if(xmlObj) {
-	// 	let resObj = `<xml><ToUserName><![CDATA[${xmlObj.FromUserName}]]></ToUserName>
-	// 		<FromUserName><![CDATA[${xmlObj.ToUserName}]]></FromUserName>
+	// let resObj = `<xml><ToUserName><![CDATA[??????]]></ToUserName>
+	// 		<FromUserName><![CDATA[!!!!!!!!!!!]]></FromUserName>
 	// 		<CreateTime>12345678</CreateTime>
 	// 		<MsgType><![CDATA[text]]></MsgType>
 	// 		<Content><![CDATA[你好]]></Content>
@@ -77,35 +48,41 @@ router.post('/wx', async (ctx, next) => {
 	// 	ctx.type = 'application/xml';
 	// 	ctx.body = resObj;
 	// 	console.log("???????ctx:",ctx);
-	// } else {
-	// 	ctx.status = 200;
-	// 	ctx.body = 'success';
-	// 	console.log("!!!!!!!!ctx:",ctx);
-	// }
-	// let body = [];
-	// ctx.req.on('data', chunk => {
-	// 	body.push(chunk);
-	// }).on('end', () => {
-	// 	let xml = Buffer.concat(body).toString();
-	// 	let parseString = promisify(xml2js.parseString, xml2js);
-	// 	parseString(xml).then((result) => {
-	// 		let receiveData = result.xml;
-	// 		let resObj = `<xml><ToUserName><![CDATA[${receiveData.FromUserName}]]></ToUserName>
-	// 		<FromUserName><![CDATA[${receiveData.ToUserName}]]></FromUserName>
-	// 		<CreateTime>12345678</CreateTime>
-	// 		<MsgType><![CDATA[text]]></MsgType>
-	// 		<Content><![CDATA[你好]]></Content>
-	// 		</xml>`;
-	// 		ctx.res.writeHead(200, {'Content-Type': 'application/xml'});
-	// 		ctx.res.end(resObj);
-	// 		console.log("router parseString ctx:",ctx);
-			
-	// 	}).catch((err)=>{
-	// 		ctx.status = 200;
-	// 		ctx.body = 'success';
-	// 		console.log("router error:", err);
-	// 	})
-	// })
+	function getXmlObj(ctx){
+		return new Promise((resolve, reject) => {
+			let body = [];
+			ctx.req.on('data', chunk => {
+				body.push(chunk);
+			}).on('end', () => {
+				let xml = Buffer.concat(body).toString();
+				let parseString = promisify(xml2js.parseString, xml2js);
+				parseString(xml).then((result) => {
+					let receiveData = result.xml;
+					resolve(receiveData);
+				}).catch((err)=>{
+					reject(err);
+				})
+			})
+		})
+	}
+	let xmlObj = await getXmlObj(ctx);
+	await next();
+	if(xmlObj) {
+		let resObj = `<xml><ToUserName><![CDATA[${xmlObj.FromUserName}]]></ToUserName>
+			<FromUserName><![CDATA[${xmlObj.ToUserName}]]></FromUserName>
+			<CreateTime>12345678</CreateTime>
+			<MsgType><![CDATA[text]]></MsgType>
+			<Content><![CDATA[你好]]></Content>
+			</xml>`;
+		ctx.status = 200;
+		ctx.type = 'application/xml';
+		ctx.body = resObj;
+		console.log("???????ctx:",ctx);
+	} else {
+		ctx.status = 200;
+		ctx.body = 'success';
+		console.log("!!!!!!!!ctx:",ctx);
+	}
 })
 
 app.use(wx)
