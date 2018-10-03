@@ -55,7 +55,7 @@ router.post('/wx', (ctx, next) => {
 			ctx.res.writeHead(200, {'Content-Type': 'application/xml'});
 			ctx.res.end(resObj);
 			console.log("router parseString ctx:",ctx);
-			next();
+			
 		}).catch((err)=>{
 			ctx.status = 200;
 			ctx.body = 'success';
