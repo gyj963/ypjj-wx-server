@@ -56,6 +56,7 @@ router.post('/wx', async (ctx, next) => {
 		})
 	}
 	ctx.status = 200;
+	ctx.type = 'application/xml';
 	let xmlObj = await getXmlObj(ctx);
 	if(xmlObj) {
 		let resObj = `<xml><ToUserName><![CDATA[${xmlObj.FromUserName}]]></ToUserName>
@@ -64,7 +65,6 @@ router.post('/wx', async (ctx, next) => {
 			<MsgType><![CDATA[text]]></MsgType>
 			<Content><![CDATA[你好]]></Content>
 			</xml>`;
-		ctx.type = 'application/xml';
 		ctx.body = resObj;
 		console.log("???????ctx:",ctx);
 	} else {
