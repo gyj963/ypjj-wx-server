@@ -14,7 +14,7 @@ function Wx(ctx, next) {
         echostr,
         hashcode,
     }
-    next();
+    await next();
 }
 
 module.exports = Wx;
