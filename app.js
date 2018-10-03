@@ -57,6 +57,7 @@ router.post('/wx', async (ctx, next) => {
 	}
 	ctx.status = 200;
 	ctx.type = 'application/xml';
+	ctx.body = 'success';
 	let xmlObj = await getXmlObj(ctx);
 	if(xmlObj) {
 		let resObj = `<xml><ToUserName><![CDATA[${xmlObj.FromUserName}]]></ToUserName>
