@@ -64,8 +64,13 @@ router.post('/wx', async (ctx, next) => {
 			<Content><![CDATA[你好]]></Content>
 			</xml>`;
 		ctx.status = 200;
-		ctx.set('Content-Type', 'application/xml');
+		ctx.type = 'application/xml';
 		ctx.body = resObj;
+		console.log("???????ctx:",ctx);
+	} else {
+		ctx.status = 200;
+		ctx.body = 'success';
+		console.log("!!!!!!!!ctx:",ctx);
 	}
 	// let body = [];
 	// ctx.req.on('data', chunk => {
