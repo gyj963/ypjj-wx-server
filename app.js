@@ -34,26 +34,32 @@ router.get('/wx', ctx => {
 
 router.post('/wx', ctx => {
 	if(ctx.wx.hashcode != ctx.wx.signature){
+		ctx.status = 500;
 		ctx.body = 'failed';
 		return false;
 	}
-	let xml = Buffer.concat(ctx.body).toString();
-	let parseString = promisify(xml2js.parseString, xml2js);
-	parseString(xml).then((result) => {
-		let receiveData = result.xml;
-		let resObj = `<xml>
-			<ToUserName><![CDATA[${receiveData.FromUserName}]]></ToUserName>
-			<FromUserName><![CDATA[${receiveData.ToUserName}]]></FromUserName>
-			<CreateTime>12345678</CreateTime>
-			<MsgType><![CDATA[text]]></MsgType>
-			<Content><![CDATA[你好]]></Content>
-			</xml>`;
-		ctx.status = 200;
-		ctx.set('Content-Type', 'application/xml')
-		ctx.body = resObj;
-	}).catch((err)=>{
-		ctx.status = 200;
-		ctx.body = 'success';
+	let body = [];
+	ctx.req.on('data', chunk => {
+		body.push(chunk);
+	}).on('end', () => {
+		let xml = Buffer.concat(body).toString();
+		let parseString = promisify(xml2js.parseString, xml2js);
+		parseString(xml).then((result) => {
+			let receiveData = result.xml;
+			let resObj = `<xml>
+				<ToUserName><![CDATA[${receiveData.FromUserName}]]></ToUserName>
+				<FromUserName><![CDATA[${receiveData.ToUserName}]]></FromUserName>
+				<CreateTime>12345678</CreateTime>
+				<MsgType><![CDATA[text]]></MsgType>
+				<Content><![CDATA[你好]]></Content>
+				</xml>`;
+			ctx.status = 200;
+			ctx.set('Content-Type', 'application/xml')
+			ctx.body = resObj;
+		}).catch((err)=>{
+			ctx.status = 200;
+			ctx.body = 'success';
+		})
 	})
 })
 
