@@ -75,7 +75,6 @@ router.post('/wx', async (ctx, next) => {
 	}
 })
 
-app.use(wx)
 app.use(router.routes());
 // app.use(router.allowedMethods());
 
