@@ -38,6 +38,7 @@ router.post('/wx', async (ctx, next) => {
 		ctx.body = 'failed';
 		return false;
 	}
+	console.log("ctx.req.body:",ctx.req.body);
 	function getXmlObj(ctx){
 		return new Promise((resolve, reject) => {
 			let body = [];
