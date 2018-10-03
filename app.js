@@ -41,8 +41,7 @@ router.post('/wx', (ctx, next) => {
 	let body = [];
 	ctx.req.on('data', chunk => {
 		body.push(chunk);
-	}).on('end', async () => {
-		await next();
+	}).on('end', () => {
 		let xml = Buffer.concat(body).toString();
 		let parseString = promisify(xml2js.parseString, xml2js);
 		parseString(xml).then((result) => {
@@ -57,6 +56,7 @@ router.post('/wx', (ctx, next) => {
 			ctx.set('Content-Type', 'application/xml')
 			ctx.body = resObj;
 			console.log("router parseString ctx:",ctx);
+			next();
 		}).catch((err)=>{
 			ctx.status = 200;
 			ctx.body = 'success';
