@@ -7,6 +7,7 @@ const Router = require('koa-router');
 const wx = require('./server/middleware/wx')
 const hostname = 'localhost';
 const port = 80;
+// const port = 3000;
 
 var app = new Koa();
 var router = new Router();
@@ -56,7 +57,7 @@ router.post('/wx', ctx => {
 	})
 })
 
-app.use(wx())
+app.use(wx)
 app.use(router.routes());
 app.use(router.allowedMethods());
 
