@@ -32,7 +32,7 @@ router.get('/wx', ctx => {
 	}
 })
 
-router.post('/wx', ctx => {
+router.post('/wx', async (ctx, next) => {
 	if(ctx.wx.hashcode != ctx.wx.signature){
 		ctx.status = 500;
 		ctx.body = 'failed';
@@ -42,6 +42,7 @@ router.post('/wx', ctx => {
 	ctx.req.on('data', chunk => {
 		body.push(chunk);
 	}).on('end', () => {
+		await next();
 		let xml = Buffer.concat(body).toString();
 		let parseString = promisify(xml2js.parseString, xml2js);
 		parseString(xml).then((result) => {
