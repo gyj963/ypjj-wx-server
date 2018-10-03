@@ -22,6 +22,24 @@ let promisify = (fn, receiver) => {
 	}
 }
 
+function getXmlObj(ctx){
+	return new Promise((resolve, reject) => {
+		let body = [];
+		ctx.req.on('data', chunk => {
+			body.push(chunk);
+		}).on('end', () => {
+			let xml = Buffer.concat(body).toString();
+			let parseString = promisify(xml2js.parseString, xml2js);
+			parseString(xml).then((result) => {
+				let receiveData = result.xml;
+				resolve(receiveData);
+			}).catch((err)=>{
+				reject(err);
+			})
+		})
+	})
+}
+
 router.get('/wx', ctx => {
 	if(ctx.wx.hashcode == ctx.wx.signature){
 		ctx.status = 200;
@@ -38,27 +56,6 @@ router.post('/wx', async (ctx, next) => {
 		ctx.body = 'failed';
 		return false;
 	}
-	console.log("ctx.req.body:",ctx.req.body);
-	function getXmlObj(ctx){
-		return new Promise((resolve, reject) => {
-			let body = [];
-			ctx.req.on('data', chunk => {
-				body.push(chunk);
-			}).on('end', () => {
-				let xml = Buffer.concat(body).toString();
-				let parseString = promisify(xml2js.parseString, xml2js);
-				parseString(xml).then((result) => {
-					let receiveData = result.xml;
-					resolve(receiveData);
-				}).catch((err)=>{
-					reject(err);
-				})
-			})
-		})
-	}
-	ctx.status = 200;
-	ctx.type = 'application/xml';
-	ctx.body = 'success';
 	let xmlObj = await getXmlObj(ctx);
 	if(xmlObj) {
 		let resObj = `<xml><ToUserName><![CDATA[${xmlObj.FromUserName}]]></ToUserName>
@@ -67,6 +64,8 @@ router.post('/wx', async (ctx, next) => {
 			<MsgType><![CDATA[text]]></MsgType>
 			<Content><![CDATA[你好]]></Content>
 			</xml>`;
+		ctx.status = 200;
+		ctx.type = 'application/xml';
 		ctx.body = resObj;
 		console.log("???????ctx:",ctx);
 	} else {
