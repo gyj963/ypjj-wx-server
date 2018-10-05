@@ -57,7 +57,7 @@ let getTicket = (access_token) => {
     let getTicketUrl = 'https://api.weixin.qq.com/cgi-bin/ticket/getticket';
     let queryObj = {
         access_token,
-        type: jsapi,
+        type: 'jsapi',
     }
     return request
     .get(getTicketUrl)
