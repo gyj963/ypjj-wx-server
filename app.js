@@ -3,12 +3,15 @@ const Koa = require('koa');
 const Router = require('koa-router');
 const wx = require('./server/middleware/wx')
 const mongoose = require('./server/middleware/mongoose')
+
+const updatewxdata = require('./server/controller/updatewxdata')
 const hostname = 'localhost';
 const port = 80;
 // const port = 3000;
 
 var app = new Koa();
 var router = new Router();
+
 
 let promisify = (fn, receiver) => {
 	return (...args) => {
@@ -71,10 +74,7 @@ router.post('/wx', async ctx => {
 	}
 })
 
-router.get('/wxconfig', async ctx => {
-	let { url } = this.query;
-
-})
+router.get('/updatewx', updatewxdata)
 
 app.use(wx)
 app.use(mongoose)

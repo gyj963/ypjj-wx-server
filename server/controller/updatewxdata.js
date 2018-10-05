@@ -1,16 +1,30 @@
-let updatewxdata = ctx => {
-    const mongoose = ctx.mongoose;
-    const Schema = mongoose.Schema;
-    const WxCacheSchema = new Schema({
-        value: String,
-        expires: Date
-    });
-    let AccessToken = mongoose.model('accessToken', WxCacheSchema);
-    let JsapiTicket = mongoose.model('jsapiTicket', WxCacheSchema);
+const request = require('superagent')
+const config = require('../../config/default')
 
-    let url_getaccesstoken = `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=&secret=`
-    fetch()
-
+let updatewxdata = async (ctx, next) => {
+    // const db = ctx.db;
+    // const Schema = db.Schema;
+    // const WxCacheSchema = new Schema({
+    //     value: String,
+    //     expires: Date
+    // });
+    // let AccessToken = db.model('accessToken', WxCacheSchema);
+    // let JsapiTicket = db.model('jsapiTicket', WxCacheSchema);
+    
+    let getAccesstoken = `https://api.weixin.qq.com/cgi-bin/token`;
+    let queryObj = {
+        grant_type: 'client_credential',
+        appid: config.appid,
+        secret: config.appsecret,
+    }
+    await next();
+    request
+    .get(getAccesstoken)
+    .query(queryObj)
+    .end((err, res) => {
+        ctx.body = res.body;
+        console.log("res:",res.body);
+    })
 }
 
 module.exports = updatewxdata;
