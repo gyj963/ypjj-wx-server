@@ -1,10 +1,8 @@
-const http = require('http');
-const url = require('url');
-const crypto = require('crypto');
 const xml2js = require('xml2js');
 const Koa = require('koa');
 const Router = require('koa-router');
 const wx = require('./server/middleware/wx')
+const mongoose = require('./server/middleware/mongoose')
 const hostname = 'localhost';
 const port = 80;
 // const port = 3000;
@@ -50,7 +48,7 @@ router.get('/wx', ctx => {
 	}
 })
 
-router.post('/wx', async (ctx, next) => {
+router.post('/wx', async ctx => {
 	if(ctx.wx.hashcode != ctx.wx.signature){
 		ctx.status = 500;
 		ctx.body = 'failed';
@@ -67,15 +65,19 @@ router.post('/wx', async (ctx, next) => {
 		ctx.status = 200;
 		ctx.type = 'application/xml';
 		ctx.body = resObj;
-		console.log("???????ctx:",ctx);
 	} else {
 		ctx.status = 200;
 		ctx.body = 'success';
-		console.log("!!!!!!!!ctx:",ctx);
 	}
 })
 
+router.get('/wxconfig', async ctx => {
+	let { url } = this.query;
+
+})
+
 app.use(wx)
+app.use(mongoose)
 app.use(router.routes());
 // app.use(router.allowedMethods());
 

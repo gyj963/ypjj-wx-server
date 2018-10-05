@@ -1,7 +1,6 @@
 const crypto = require('crypto');
 
 async function Wx(ctx, next) {
-    console.log("Wx ctx:",ctx);
     let paramsMap = ctx.query;
     let { signature, timestamp, nonce, echostr } = paramsMap;
     let token = 'helloypjj';
