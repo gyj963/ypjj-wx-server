@@ -4,7 +4,8 @@ const Router = require('koa-router');
 const wx = require('./server/middleware/wx')
 const mongoose = require('./server/middleware/mongoose')
 
-const updatewxdata = require('./server/controller/updatewxdata')
+const updatewxcache = require('./server/controller/updatewxcache')
+const getwxcache = require('./server/controller/getwxcache')
 const hostname = 'localhost';
 const port = 80;
 // const port = 3000;
@@ -74,7 +75,8 @@ router.post('/wx', async ctx => {
 	}
 })
 
-router.get('/updatewx', updatewxdata)
+router.get('/updatewxcache', updatewxcache)
+router.get('/getwxcache', getwxcache)
 
 app.use(wx)
 app.use(mongoose)
