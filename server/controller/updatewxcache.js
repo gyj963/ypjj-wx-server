@@ -40,6 +40,7 @@ let updatewxcache = ctx => {
             //     }
             // })
             let wxcachejson = {
+                curTimestamp,
                 accessToken: {
                     value: accessTokenObj.access_token,
                     expires: curTimestamp+accessTokenObj.expires_in, // 过期时间时间戳
@@ -49,12 +50,7 @@ let updatewxcache = ctx => {
                     expires: curTimestamp+ticketObj.expires_in,
                 }
             }
-            fs.writeFile(`./server/wxcache.json`, JSON.stringify(wxcachejson), err => {
-                request.get('getwxcache').then(data => {
-                    console.log("data:", data);
-                })
-                console.log("err:".err);
-            });
+            fs.writeFileSync(`./server/wxcache.json`, JSON.stringify(wxcachejson));
         })
     })
 }
