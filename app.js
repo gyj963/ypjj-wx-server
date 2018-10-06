@@ -2,7 +2,7 @@ const xml2js = require('xml2js');
 const Koa = require('koa');
 const Router = require('koa-router');
 const wx = require('./server/middleware/wx')
-const mongoose = require('./server/middleware/mongoose')
+// const mongoose = require('./server/middleware/mongoose')
 
 const updatewxcache = require('./server/controller/updatewxcache')
 const getwxcache = require('./server/controller/getwxcache')
@@ -79,7 +79,7 @@ router.get('/updatewxcache', updatewxcache)
 router.get('/getwxcache', getwxcache)
 
 app.use(wx)
-app.use(mongoose)
+// app.use(mongoose)
 app.use(router.routes());
 // app.use(router.allowedMethods());
 

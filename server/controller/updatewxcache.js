@@ -1,43 +1,60 @@
 const request = require('superagent')
 const config = require('../../config/default')
+const fs = require('fs');
 
 let updatewxcache = ctx => {
-    const db = ctx.db;
-    const Schema = db.Schema;
-    const WxCacheSchema = new Schema({
-        key: String,
-        value: String,
-        expires: Date
-    });
-    let wxCache = db.model('wxCache', WxCacheSchema);
+    ctx.status = 200;
+    // const db = ctx.db;
+    // const Schema = db.Schema;
+    // const WxCacheSchema = new Schema({
+    //     key: String,
+    //     value: String,
+    //     expires: Date
+    // });
+    // let wxCache = db.model('wxCache', WxCacheSchema);
     let curTimestamp = new Date().getTime();
     getAccesstoken()
     .end((err, res) => {
-        ctx.body = res.body;
         let accessTokenObj = res.body;
-        let accessTokenCache = new wxCache({
-            key: 'access_token',
-            value: accessTokenObj.access_token,
-            expires: curTimestamp+accessTokenObj.expires_in, // 过期时间时间戳
-        });
-        accessTokenCache.save((err)=>{
-            if(err){
-                console.log("accessTokenCache.save err:",err);
-            }
-        })
+        // let accessTokenCache = new wxCache({
+        //     key: 'access_token',
+        //     value: accessTokenObj.access_token,
+        //     expires: curTimestamp+accessTokenObj.expires_in, // 过期时间时间戳
+        // });
+        // accessTokenCache.save((err)=>{
+        //     if(err){
+        //         console.log("accessTokenCache.save err:",err);
+        //     }
+        // })
         getTicket(accessTokenObj.access_token)
         .end((err, res) => {
             let ticketObj = res.body;
-            let jsapiTicketCache = new wxCache({
-                key: 'jsapi_ticket',
-                value: ticketObj.ticket,
-                expires: curTimestamp+ticketObj.expires_in,
-            });
-            jsapiTicketCache.save((err)=>{
-                if(err){
-                    console.log("JsapiTicket.save err:",err);
+            // let jsapiTicketCache = new wxCache({
+            //     key: 'jsapi_ticket',
+            //     value: ticketObj.ticket,
+            //     expires: curTimestamp+ticketObj.expires_in,
+            // });
+            // jsapiTicketCache.save((err)=>{
+            //     if(err){
+            //         console.log("JsapiTicket.save err:",err);
+            //     }
+            // })
+            let wxcachejson = {
+                accessToken: {
+                    value: accessTokenObj.access_token,
+                    expires: curTimestamp+accessTokenObj.expires_in, // 过期时间时间戳
+                },
+                jsapiTicket: {
+                    value: ticketObj.ticket,
+                    expires: curTimestamp+ticketObj.expires_in,
                 }
-            })
+            }
+            fs.writeFile(`./server/wxcache.json`, JSON.stringify(wxcachejson), err => {
+                request.get('getwxcache').then(data => {
+                    console.log("data:", data);
+                })
+                console.log("err:".err);
+            });
         })
     })
 }
