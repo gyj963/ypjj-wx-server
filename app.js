@@ -1,11 +1,14 @@
 const xml2js = require('xml2js');
 const Koa = require('koa');
 const Router = require('koa-router');
+const staticServe = require('koa-static');
 const wx = require('./server/middleware/wx')
+const config = require('./config/default')
 // const mongoose = require('./server/middleware/mongoose')
 
 const updatewxcache = require('./server/controller/updatewxcache')
 const getwxcache = require('./server/controller/getwxcache')
+const getwxconfig = require('./server/controller/getwxconfig')
 const hostname = 'localhost';
 const port = 80;
 // const port = 3000;
@@ -77,12 +80,14 @@ router.post('/wx', async ctx => {
 
 router.get('/updatewxcache', updatewxcache)
 router.get('/getwxcache', getwxcache)
+router.get('/getwxconfig', getwxconfig)
 
 app.use(wx)
 // app.use(mongoose)
-app.use(router.routes());
+app.use(router.routes())
+app.use(staticServe(config.publicPath))
 // app.use(router.allowedMethods());
 
 app.listen(port, () => {
-    console.log(`Server runnint at ${port}`);
+    console.log(`Server runnint at ${port}`)
 })
